@@ -71,22 +71,23 @@ Stream.prototype = {
     }
   },
 
-  enumerateInterval: function(low, high) {
-    if (low > high) {
-      return new Stream();
-    } else {
-      return new Stream(low, this.enumerateInterval(low + 1, high));
-    }
-  },
+};
 
-  filter: function(predicate){
-    if (this.empty()){
-      return new Stream();
-    } else if (predicate(this.head())) {
-      return new Stream(this.head(),this.filter.call(this.tail(),predicate));
-    } else {
-      return this.filter.call(this.tail(),predicate);
-    }
+Stream.enumerateInterval = function(low, high) {
+  if (low > high) {
+    return new Stream();
+  } else {
+    return new Stream(low, Stream.enumerateInterval(low + 1, high));
+  }
+};
+
+Stream.filter = function(predicate, stream){
+  if (stream.empty()){
+    return new Stream();
+  } else if (predicate(stream.head())) {
+    return new Stream(stream.head(),Stream.filter(predicate, stream.tail()));
+  } else {
+    return Stream.filter(predicate, stream.tail());
   }
 };
 
@@ -110,11 +111,4 @@ var smallestDivisor = function(num) {
   return findDivisor(num, 2);
 };
 
-
-var integersStartingFrom = function(n) {
-  return new Stream(n, integersStartingFrom(n + 1));
-};
-
-var integers = function(){
-  return integersStartingFrom(1);
-};
+console.log(Stream.filter(isPrime, Stream.enumerateInterval(10000, 1000000)).tail().head());
