@@ -72,38 +72,58 @@ Stream.prototype = {
       proc(this.head());
       this.tail().each(proc);
     }
-  }
+  },
 
-};
+  range: function(low, high) {
+    if (low > high) {
+      return new Stream();
+    } else {
+      var self = this;
+      return new Stream(low, function() {
+        return self.range(low + 1, high);
+      });
+    }
+  },
 
-Stream.range = function(low, high) {
-  if (low > high) {
-    return new Stream();
-  } else {
-    return new Stream(low, function() {
-      return Stream.range(low + 1, high);
+  filter: function(predicate){
+    var self = this;
+    if (self.empty()){
+      return new Stream();
+    } else if (predicate(self.head())) {
+      return new Stream(self.head(), function() {
+        return self.tail().filter(predicate);
+      });
+    } else {
+      return self.tail().filter(predicate);
+    }
+  },
+
+  sieve: function() {
+    var self = this;
+    return new Stream(self.head(), function() {
+      return self.tail().filter(function(num) {
+        return !willDivide(self.head(), num);
+        }).sieve();
     });
-  }
-};
+  },
 
-Stream.filter = function(predicate, stream){
-  if (stream.empty()){
-    return new Stream();
-  } else if (predicate(stream.head())) {
-    return new Stream(stream.head(), function() {
-      return Stream.filter(predicate, stream.tail());
-    });
-  } else {
-    return Stream.filter(predicate, stream.tail());
-  }
-};
+  zip: function(proc, stream) {
+    if (this.empty()) {
+      return stream;
+    } else if (stream.empty()) {
+      return this;
+    }
+    var self = this;
+    return new Stream(proc(self.head(),stream.head(), function() {
+      return self.tail().zip(proc, stream.tail());
+    }));
+  },
 
-Stream.sieve = function(stream){
-  return new Stream(stream.head(), function() {
-    return Stream.sieve(Stream.filter(function(num) {
-      return !willDivide(stream.head(), num);
-      }, stream.tail()));
-  });
+  add: function(stream) {
+    return this.zip(function(value1, value2) {
+      return value1 + value2;
+    }, stream);
+  }
 };
 
 var smallestDivisor = function(num) {
@@ -127,25 +147,20 @@ var willDivide = function(a, b){
   return b % a === 0;
 };
 
-var integersStartingFrom = function(num) {
+Stream.integersStartingFrom = function(num) {
   return new Stream(num, function(){
     return integersStartingFrom(num += 1);
   });
 };
 
-var integers = integersStartingFrom(1);
-
-var notDivisibleBySeven = function() {
-  return Stream.filter(function(num){
-    return !willDivide(7, num);
-  }, integers);
+Stream.fibGen = function(a, b) {
+  return new Stream(a, function(){
+    return fibGen(b, a + b);
+  });
 };
 
-var primes = Stream.sieve(integersStartingFrom(2));
-console.log(primes.item(50));
-console.log(primes.head());
+var fibonacci = Stream.fibGen(0, 1);
 
-console.log(notDivisibleBySeven().item(100));
-// console.log(integers.head());
-// console.log(integers.tail().head());
-// console.log(Stream.filter(isPrime, Stream.range(10000, 1000000)).tail().head());
+var primes = Stream.integersStartingFrom(2).sieve();
+console.log(primes.item(50));
+console.log(new Stream().range(10000,1000000).filter(isPrime).tail().head());
