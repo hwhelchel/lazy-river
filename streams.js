@@ -72,7 +72,7 @@ Stream.prototype = {
       proc(this.head());
       this.tail().each(proc);
     }
-  },
+  }
 
 };
 
@@ -98,8 +98,12 @@ Stream.filter = function(predicate, stream){
   }
 };
 
-var isPrime = function(num){
-  return num === smallestDivisor(num);
+Stream.sieve = function(stream){
+  return new Stream(stream.head(), function() {
+    return Stream.sieve(Stream.filter(function(num) {
+      return !willDivide(stream.head(), num);
+      }, stream.tail()));
+  });
 };
 
 var smallestDivisor = function(num) {
@@ -112,10 +116,36 @@ var smallestDivisor = function(num) {
       return findDivisor(num, testDivisor + 1);
     }
   };
-  var willDivide = function(a, b){
-    return b % a === 0;
-  };
   return findDivisor(num, 2);
 };
 
-console.log(Stream.filter(isPrime, Stream.range(10000, 1000000)).tail().head());
+var isPrime = function(num){
+  return num === smallestDivisor(num);
+};
+
+var willDivide = function(a, b){
+  return b % a === 0;
+};
+
+var integersStartingFrom = function(num) {
+  return new Stream(num, function(){
+    return integersStartingFrom(num += 1);
+  });
+};
+
+var integers = integersStartingFrom(1);
+
+var notDivisibleBySeven = function() {
+  return Stream.filter(function(num){
+    return !willDivide(7, num);
+  }, integers);
+};
+
+var primes = Stream.sieve(integersStartingFrom(2));
+console.log(primes.item(50));
+console.log(primes.head());
+
+console.log(notDivisibleBySeven().item(100));
+// console.log(integers.head());
+// console.log(integers.tail().head());
+// console.log(Stream.filter(isPrime, Stream.range(10000, 1000000)).tail().head());
