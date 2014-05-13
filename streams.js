@@ -50,7 +50,7 @@ Stream.prototype = {
     if (element === 0){
       return this.head();
     } else {
-      return this.item.call(this.tail(), element - 1);
+      return this.tail().item(element - 1);
     }
   },
 
@@ -58,7 +58,10 @@ Stream.prototype = {
     if (this.empty()){
       return new Stream();
     } else {
-      return new Stream(proc(this.head()),this.map.call(this.tail(),proc));
+      var self = this;
+      return new Stream(proc(this.head()), function() {
+        return self.tail().map(proc);
+      });
     }
   },
 
@@ -67,17 +70,19 @@ Stream.prototype = {
       return 'done';
     } else {
       proc(this.head());
-      this.each.call(this.tail(), proc);
+      this.tail().each(proc);
     }
   },
 
 };
 
-Stream.enumerateInterval = function(low, high) {
+Stream.range = function(low, high) {
   if (low > high) {
     return new Stream();
   } else {
-    return new Stream(low, Stream.enumerateInterval(low + 1, high));
+    return new Stream(low, function() {
+      return Stream.range(low + 1, high);
+    });
   }
 };
 
@@ -85,7 +90,9 @@ Stream.filter = function(predicate, stream){
   if (stream.empty()){
     return new Stream();
   } else if (predicate(stream.head())) {
-    return new Stream(stream.head(),Stream.filter(predicate, stream.tail()));
+    return new Stream(stream.head(), function() {
+      return Stream.filter(predicate, stream.tail());
+    });
   } else {
     return Stream.filter(predicate, stream.tail());
   }
@@ -111,4 +118,4 @@ var smallestDivisor = function(num) {
   return findDivisor(num, 2);
 };
 
-console.log(Stream.filter(isPrime, Stream.enumerateInterval(10000, 1000000)).tail().head());
+console.log(Stream.filter(isPrime, Stream.range(10000, 1000000)).tail().head());
