@@ -74,6 +74,13 @@ Stream.prototype = {
     }
   },
 
+  display: function(){
+    this.each(function(value){
+      console.log(value);
+      console.log();
+    });
+  },
+
   range: function(low, high) {
     if (low > high) {
       return new Stream();
@@ -114,15 +121,31 @@ Stream.prototype = {
       return this;
     }
     var self = this;
-    return new Stream(proc(self.head(),stream.head(), function() {
+    return new Stream(proc(self.head(),stream.head()), function() {
       return self.tail().zip(proc, stream.tail());
-    }));
+    });
   },
 
   add: function(stream) {
     return this.zip(function(value1, value2) {
       return value1 + value2;
     }, stream);
+  },
+
+  scale: function(factor){
+    return this.map(function(head){
+      return head * factor;
+    });
+  },
+
+  interleave: function(stream) {
+    if (this.empty()) {
+      return stream;
+    } else if (stream.empty()) {
+      return this;
+    }
+    var self = this;
+    return new Stream(this.head(), stream.interleave(this.tail()));
   }
 };
 
