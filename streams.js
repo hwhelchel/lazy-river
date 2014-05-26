@@ -170,15 +170,17 @@ var willDivide = function(a, b){
   return b % a === 0;
 };
 
+module.exports = Stream;
+
 Stream.integersStartingFrom = function(num) {
   return new Stream(num, function(){
-    return integersStartingFrom(num += 1);
+    return Stream.integersStartingFrom(num += 1);
   });
 };
 
 Stream.fibGen = function(a, b) {
   return new Stream(a, function(){
-    return fibGen(b, a + b);
+    return Stream.fibGen(b, a + b);
   });
 };
 
