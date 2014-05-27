@@ -105,6 +105,19 @@ Stream.prototype = {
     }
   },
 
+  member: function(x){
+    var self = this;
+
+    while(!self.empty()) {
+      if (self.head() == x) {
+          return true;
+      }
+      self = self.tail();
+    }
+
+    return false;
+  },
+
   sieve: function() {
     var self = this;
     return new Stream(self.head(), function() {
