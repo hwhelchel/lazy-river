@@ -1,7 +1,7 @@
 {
   "name": "lazy-river",
   "version": "0.0.1",
-  "description": "Implements \"stream\" data structure which allows for lazy evaluation of lists. Inspired by Structure and Interpretation of Computer Programs by Abelson and Sussman as well as stream.js.",
+  "description": "Implements \"stream\" data structure which allows for lazy evaluation of lists.",
   "main": "streams.js",
   "directories": {
     "test": "test"
