@@ -1,0 +1,35 @@
+{
+  "name": "lazy-river",
+  "version": "0.0.1",
+  "description": "Implements \"stream\" data structure which allows for lazy evaluation of lists. Inspired by Structure and Interpretation of Computer Programs by Abelson and Sussman as well as stream.js.",
+  "main": "streams.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "expect.js": "^0.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hwhelchel/lazy-river.git"
+  },
+  "keywords": [
+    "stream",
+    "lazy",
+    "list",
+    "infinite",
+    "stream",
+    "lazy",
+    "evaluation"
+  ],
+  "author": "Harry Whelchel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hwhelchel/lazy-river/issues"
+  },
+  "homepage": "https://github.com/hwhelchel/lazy-river"
+}

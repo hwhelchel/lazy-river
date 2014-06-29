@@ -154,4 +154,6 @@ Stream.prototype = {
   }
 };
 
-module.exports = Stream;
+if (typeof module !== 'undefined') {
+  module.exports = Stream;
+}
