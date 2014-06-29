@@ -77,7 +77,6 @@ Stream.prototype = {
   display: function(){
     this.each(function(value){
       console.log(value);
-      console.log();
     });
   },
 
@@ -119,6 +118,9 @@ Stream.prototype = {
   },
 
   sieve: function() {
+    var willDivide = function(a, b){
+      return b % a === 0;
+    };
     var self = this;
     return new Stream(self.head(), function() {
       return self.tail().filter(function(num) {
@@ -149,56 +151,7 @@ Stream.prototype = {
     return this.map(function(head){
       return head * factor;
     });
-  },
-
-  interleave: function(stream) {
-    if (this.empty()) {
-      return stream;
-    } else if (stream.empty()) {
-      return this;
-    }
-    var self = this;
-    return new Stream(this.head(), stream.interleave(this.tail()));
   }
 };
 
-var smallestDivisor = function(num) {
-  var findDivisor = function(num, testDivisor){
-    if (testDivisor*testDivisor > num){
-      return num;
-    } else if (willDivide(testDivisor, num)) {
-      return testDivisor;
-    } else {
-      return findDivisor(num, testDivisor + 1);
-    }
-  };
-  return findDivisor(num, 2);
-};
-
-var isPrime = function(num){
-  return num === smallestDivisor(num);
-};
-
-var willDivide = function(a, b){
-  return b % a === 0;
-};
-
 module.exports = Stream;
-
-Stream.integersStartingFrom = function(num) {
-  return new Stream(num, function(){
-    return Stream.integersStartingFrom(num += 1);
-  });
-};
-
-Stream.fibGen = function(a, b) {
-  return new Stream(a, function(){
-    return Stream.fibGen(b, a + b);
-  });
-};
-
-var fibonacci = Stream.fibGen(0, 1);
-
-var primes = Stream.integersStartingFrom(2).sieve();
-console.log(primes.item(50));
-console.log(new Stream().range(10000,1000000).filter(isPrime).tail().head());

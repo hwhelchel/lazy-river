@@ -14,16 +14,6 @@ describe('Stream',function(){
     this.stream = new Stream(this.head, this.tail);
     this.taillessStream = new Stream(this.head);
     this.headlessStream = new Stream();
-    this.proc = function(value){
-      return 2 * value;
-    };
-    this.predicate = function(x){
-      if (x !== 1) {
-        return true;
-      } else {
-        return false;
-      }
-    };
   });
 
   describe('initialization', function(){
@@ -94,6 +84,11 @@ describe('Stream',function(){
   });
 
   describe('#map',function(){
+    beforeEach(function(){
+      this.proc = function(value){
+        return 2 * value;
+      };
+    });
     it('returns a stream',function(){
       expect(this.stream.map(this.proc)).to.be.a(Stream);
     });
@@ -110,10 +105,6 @@ describe('Stream',function(){
         expect(this.headlessStream.map(this.proc).empty()).to.be(true);
       });
     });
-  });
-
-  describe('#each',function(){
-    it('message');
   });
 
   describe('#display',function(){
@@ -149,6 +140,15 @@ describe('Stream',function(){
   });
 
   describe('#filter',function(){
+    beforeEach(function(){
+      this.predicate = function(x){
+        if (x !== 1) {
+          return true;
+        } else {
+          return false;
+        }
+      };
+    });
     it('returns a stream',function(){
       expect(this.stream.filter(this.predicate)).to.be.a(Stream);
     });
@@ -174,8 +174,6 @@ describe('Stream',function(){
     it('includes prime numbers',function(){
       expect(this.primes.member(3)).to.be(true);
     });
-
-    it('does not include numbers that are not prime');
   });
 
   describe('#zip',function(){
@@ -214,25 +212,6 @@ describe('Stream',function(){
 
     it('multiples the values by the scale',function(){
       expect(this.stream.scale(4).head()).to.be(4);
-    });
-  });
-
-  describe('#interleave',function(){
-    it('returns a Stream',function(){
-      expect(this.stream.interleave(this.stream)).to.be.a(Stream);
-    });
-    it('alternates between the base stream and other stream',function(){
-      // expect(this.stream.interleave(this.stream).item(1)).to.be(this.stream.head());
-    });
-    describe('an empty Stream',function(){
-      it('returns the stream to be interleaved',function(){
-        expect(this.headlessStream.interleave(this.stream)).to.be(this.stream);
-      });
-    });
-    describe('an empty stream to be interleaved',function(){
-      it('returns the base stream',function(){
-        expect(this.stream.interleave(this.headlessStream)).to.be(this.stream);
-      });
     });
   });
 });
